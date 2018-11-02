@@ -34,6 +34,7 @@ install:
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
   - ls /usr/local/openresty/bin
   - export PATH=/usr/local/openresty/bin:$PATH
+  - luarocks install busted
 script:
   - lua -e "print(require'cURL'.version())"
   - ./bin/busted

@@ -22,7 +22,12 @@ install:
   - sudo apt-get install openssl libpcre3 procps perl
   - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
-  - sudo apt-get install postgresql
+  # - sudo apt-get install postgresql
+
+  - sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
+  - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  - sudo apt-get update
+  - sudo apt-get install postgresql-9.6
   - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
   - curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
   - sudo apt-get update
@@ -49,8 +54,8 @@ script:
   # - lunit.sh test.lua
 
 # after_success:
-  # - coveralls -b .. -r .. -i ./src --dump c.report.json
-  # - luacov-coveralls -j c.report.json -v
+# - coveralls -b .. -r .. -i ./src --dump c.report.json
+# - luacov-coveralls -j c.report.json -v
 
 # notifications:
 #   email:

@@ -32,7 +32,8 @@ install:
   - sudo apt-get install openssl libpcre3 procps perl
   - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
-
+  - ls /usr/local/openresty/bin
+  - export PATH=/usr/local/openresty/bin:$PATH
 script:
   - lua -e "print(require'cURL'.version())"
   - ./bin/busted

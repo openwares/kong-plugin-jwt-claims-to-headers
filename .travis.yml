@@ -37,16 +37,6 @@ install:
   - ls /usr/local/openresty/bin
   - export PATH=/usr/local/openresty/bin:$PATH
   - sudo luarocks install busted
+
 script:
-  - lua -e "print(require'cURL'.version())"
   - ./bin/busted
-  # - lunit.sh test.lua
-
-# after_success:
-# - coveralls -b .. -r .. -i ./src --dump c.report.json
-# - luacov-coveralls -j c.report.json -v
-
-# notifications:
-#   email:
-#     on_success: change
-#     on_failure: always

@@ -1,18 +1,41 @@
 # kong-jwt-claims-to-headers
 
-## Build
+work in progress....
+please check back later...
+
+## Developer Prequisites
+
+see Kong Setup section below
+
+- install postgres and cassandra locally
+- start postgres and cassandra
+- configure postgres for tests
+
+```shell
+psql postgres
+CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;
+```
+
+## Source code
+
+- Source: see kong/plugins/jwt-claims-to-headers
+- Tests: see spec/jwt-claims-to-headers
+
+## Developer Packaging and installation
+
+### Build
 
 ```shell
 luarocks make
 ```
 
-## Package
+### Package
 
 ```shell
 luarocks pack kong-plugin-jwt-claims-to-headers 0.1.0-1
 ```
 
-## Install
+### Install
 
 Install local build
 
@@ -50,8 +73,7 @@ You should see the following on start up:
 [debug] Loading plugin jwt-clatims-to-headers
 ```
 
-
-## Remove plugin
+### Remove plugin
 
 ```shell
 luarocks remove  kong-plugin-jwt-claims-to-headers
@@ -71,6 +93,8 @@ CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;
 Setup Kong so we have an environment to run our tests
 
 ## Kong Setup
+
+This is not needed, however its a good way to test that you can run tests within a Kong test environment
 
 ### Build
 

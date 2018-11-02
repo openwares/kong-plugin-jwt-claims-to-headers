@@ -7,11 +7,11 @@ env:
     - LUAROCKS=2.3.0
   matrix:
     - LUA=lua5.1
-    - LUA=lua5.2
-    - LUA=lua5.3
-    - LUA=luajit # latest stable version (2.0.4)
-    - LUA=luajit2.0 # current head of 2.0 branch
-    - LUA=luajit2.1 # current head of 2.1 branch
+    # - LUA=lua5.2
+    # - LUA=lua5.3
+    # - LUA=luajit # latest stable version (2.0.4)
+    # - LUA=luajit2.0 # current head of 2.0 branch
+    # - LUA=luajit2.1 # current head of 2.1 branch
 
 branches:
   only:
@@ -20,7 +20,7 @@ branches:
 install:
   - sudo apt-get update
   - sudo apt-get install openssl libpcre3 procps perl
-  - curl https://bintray.com/kong/kong-community-edition-deb/download_file?file_path=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb 
+  - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
   - sudo apt-get install postgresql
   - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list

@@ -2,6 +2,10 @@ language: c
 
 sudo: true
 
+services:
+  - postgresql
+  - cassandra
+
 env:
   global:
     - LUAROCKS=2.3.0
@@ -23,20 +27,23 @@ install:
   - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
 
+  - createdb kong_tests
+  - psql -U postgres -d postgres -c 'CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
+
   # - sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
   # - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
   # - sudo apt-get update
   # - sudo apt-get install postgresql-9.6
   # - pg_ctl -D /usr/local/var/postgres start &
-  - createdb kong_tests
-  - psql -U postgres -d postgres -c 'CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
-  - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-  - curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
-  - sudo apt-get update
-  - sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
-  - sudo apt-get update
-  - sudo apt-get install cassandra
-  - service cassandra start &
+  # - createdb kong_tests
+  # - psql -U postgres -d postgres -c 'CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
+  # - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+  # - curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
+  # - sudo apt-get update
+  # - sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
+  # - sudo apt-get update
+  # - sudo apt-get install cassandra
+  # - service cassandra start &
 
 # install:
 #   - luarocks make rockspecs/foo-scm-0.rockspec CFLAGS="-O2 -fPIC -ftest-coverage -fprofile-arcs" LIBFLAG="-shared --coverage"

@@ -8,11 +8,13 @@ end
 
 
 function JwtClaimsToHeadersHandler:access(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
+
   JwtClaimsToHeadersHandler.super.access(self)
 
-  -- Implement any custom logic here
+  ngx.log(ngx.ERR, "@@@@ Adding headers")
+  ngx.header["X-Jwt-ClaimX"] = "ClaimX value"
+
+  
   kong.log.inspect(config.key_names)   
 end
 

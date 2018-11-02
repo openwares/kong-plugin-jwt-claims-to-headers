@@ -6,6 +6,8 @@ services:
   - postgresql
   - cassandra
 
+addons:
+  postgresql: '9.4'
 env:
   global:
     - LUAROCKS=2.3.0

@@ -22,12 +22,13 @@ install:
   - sudo apt-get install openssl libpcre3 procps perl
   - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
-  # - sudo apt-get install postgresql
 
-  - sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
-  - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-  - sudo apt-get update
-  - sudo apt-get install postgresql-9.6
+  # - sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
+  # - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  # - sudo apt-get update
+  # - sudo apt-get install postgresql-9.6
+  # - pg_ctl -D /usr/local/var/postgres start &
+  - psql -U postgres -d postgres -c ' CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
   - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
   - curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
   - sudo apt-get update
@@ -35,8 +36,6 @@ install:
   - sudo apt-get update
   - sudo apt-get install cassandra
   - service cassandra start &
-  - pg_ctl -D /usr/local/var/postgres start &
-  - psql -U postgres -d postgres -c ' CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
 
 # install:
 #   - luarocks make rockspecs/foo-scm-0.rockspec CFLAGS="-O2 -fPIC -ftest-coverage -fprofile-arcs" LIBFLAG="-shared --coverage"

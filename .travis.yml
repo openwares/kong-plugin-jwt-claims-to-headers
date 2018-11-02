@@ -1,0 +1,57 @@
+language: c
+
+sudo: true
+
+env:
+  global:
+    - LUAROCKS=2.3.0
+  matrix:
+    - LUA=lua5.1
+    - LUA=lua5.2
+    - LUA=lua5.3
+    - LUA=luajit # latest stable version (2.0.4)
+    - LUA=luajit2.0 # current head of 2.0 branch
+    - LUA=luajit2.1 # current head of 2.1 branch
+
+branches:
+  only:
+    - master
+
+install:
+  - sudo apt-get update
+  - sudo apt-get install openssl libpcre3 procps perl
+  - sudo dpkg -i kong-community-edition-0.14.1.*.deb
+  - sudo apt-get install postgresql
+  - echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+  - curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
+  - sudo apt-get update
+  - sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
+  - sudo apt-get update
+  - sudo apt-get install cassandra
+  - service cassandra start &
+  - pg_ctl -D /usr/local/var/postgres start &
+  - psql -U postgres -d postgres -c ' CREATE USER kong_tests; CREATE DATABASE kong_tests OWNER kong_tests;'
+
+  # - source .travis/setenv_lua.sh
+  # - pip install --user cpp-coveralls
+  # - luarocks install Lua-cURL         --server=https://luarocks.org/dev
+  # - luarocks install luacov-coveralls --server=https://luarocks.org/dev
+  # - luarocks install lunitx
+
+# install:
+#   - luarocks make rockspecs/foo-scm-0.rockspec CFLAGS="-O2 -fPIC -ftest-coverage -fprofile-arcs" LIBFLAG="-shared --coverage"
+
+script:
+  - cd test
+  - lua -e "print(require'cURL'.version())"
+  - ./bin/busted
+  # - lunit.sh test.lua
+
+# after_success:
+  # - coveralls -b .. -r .. -i ./src --dump c.report.json
+  # - luacov-coveralls -j c.report.json -v
+
+# notifications:
+#   email:
+#     on_success: change
+#     on_failure: always

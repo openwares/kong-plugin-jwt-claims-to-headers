@@ -5,20 +5,21 @@
 work in progress....
 please check back later...
 
-## Install
+## Installation
 
-### Install dist build
+### Install the plugin
 
 ```shell
 luarocks install http://github.com/cdimascio/kong-plugin-jwt-claims-to-headers/kong-plugin-jwt-claims-to-headers-0.1.0-1.all.rock
 ```
 
-If you compiled it yourself you can install from the locally generated rock
+### Configure Kong to use the plugin
+
+Add the plugin’s name to the plugins list in your Kong configuration (on each Kong node):
 
 ```shell
-luarocks install kong-plugin-jwt-claims-to-headers-0.1.0-1.all.rock
+plugins = bundled,jwt-claims-to-headers
 ```
-
 
 ### Manual install
 
@@ -27,7 +28,7 @@ luarocks install kong-plugin-jwt-claims-to-headers-0.1.0-1.all.rock
 # e.g. lua_package_path = /</kong/plugins/jwt-claims-to-headers/?.lua;;
 export KONG_LUA_PACKAGE_PATH=/kong/plugins/jwt-claims-to-headers/handler.lua?.lua;;
 
-# edit kong.conf and modify the plugins directive to
+# edit the Kong configuration and modify the plugins directive to
 plugins = bundled,jwt-claims-to-headers
 ```
 

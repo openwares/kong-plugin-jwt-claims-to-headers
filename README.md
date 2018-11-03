@@ -1,5 +1,7 @@
 # kong-jwt-claims-to-headers
 
+![](https://travis-ci.org/cdimascio/kong-plugin-jwt-claims-to-headers.svg?branch=master)
+
 work in progress....
 please check back later...
 

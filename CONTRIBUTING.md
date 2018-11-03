@@ -40,6 +40,22 @@ luarocks make
 
 ### Package
 
+Create the lua rock
+
 ```shell
 luarocks pack kong-plugin-jwt-claims-to-headers 0.1.0-1
+```
+
+### Install
+
+Install your newly generated rock
+
+```shell
+luarocks install kong-plugin-jwt-claims-to-headers-0.1.0-1.all.rock
+```
+
+Add the plugin’s name to the plugins list in your Kong configuration (on each Kong node):
+
+```shell
+plugins = bundled,jwt-claims-to-headers
 ```

@@ -1,4 +1,4 @@
-# Contributig: kong-jwt-claims-to-headers
+# Contributing: kong-jwt-claims-to-headers
 
 # Prerequisites
 

@@ -20,6 +20,7 @@ psql -c 'CREATE DATABASE kong_tests OWNER kong_tests;' -U postgres
 
 - Start Cassandra `cassandra -f`
 - Start Postgres `pg_ctl -D /usr/local/var/postgres start`
+- Download [kong.conf](https://raw.githubusercontent.com/Kong/kong/master/kong.conf.default)
 
 Next, run the tests to verify everything is all good!
 

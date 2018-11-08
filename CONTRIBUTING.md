@@ -27,6 +27,10 @@ psql -c 'CREATE DATABASE kong_tests OWNER kong_tests;' -U postgres
 
 Next, run the tests to verify everything is all good!
 
+# Install dependencies
+
+- Busted `luarocks install busted`
+
 # Test
 
 ```shell

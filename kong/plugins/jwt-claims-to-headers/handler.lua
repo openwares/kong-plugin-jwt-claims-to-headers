@@ -13,6 +13,8 @@ function JwtClaimsToHeadersHandler:access(config)
   ngx.log(ngx.ERR, "@@@@ Adding headers")
   ngx.header["X-Jwt-ClaimX"] = "ClaimX value"
   ngx.req.set_header("X-Jwt-ClaimX", "ClaimX value")
+  ngx.header["X-Jwt-ClaimYt"] = "ClaimY value"
+  ngx.req.set_header("X-Jwt-ClaimY", "ClaimY value")
 
   
   kong.log.inspect(config.key_names)   

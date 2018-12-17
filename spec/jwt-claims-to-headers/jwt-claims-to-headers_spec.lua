@@ -87,7 +87,7 @@ for _, strategy in helpers.each_strategy() do
 
 
     describe("request", function()
-      it("contains the X-Jwt-ClaimX header", function()
+      it("with the 'jwt' query parameter, contains the X-claims header", function()
         local r = assert(client:send {
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
@@ -105,12 +105,31 @@ for _, strategy in helpers.each_strategy() do
         assert.equal("ClaimX value", header_value_claim_x)
         assert.equal("ClaimY value", header_value_claim_y)
       end)
+
+      it("with a jwt as the Bearer token, contains the X-claims header", function()
+        local r = assert(client:send {
+          method = "GET",
+          path = "/request",  -- makes mockbin return the entire request
+          headers = {
+            authorization = "Bearer " .. jwt_for_test,
+            host = "test1.com"
+          }
+        })
+        -- validate that the request succeeded, response status 200
+        assert.response(r).has.status(200)
+        -- now check the request (as echoed by mockbin) to have the headers
+        local header_value_claim_x = assert.request(r).has.header("X-Jwt-ClaimX")
+        local header_value_claim_y = assert.request(r).has.header("X-Jwt-ClaimY")
+        -- validate the value of the headers
+        assert.equal("ClaimX value", header_value_claim_x)
+        assert.equal("ClaimY value", header_value_claim_y)
+      end)
     end)
 
 
 
     describe("response", function()
-      it("contains the X-Jwt-ClaimX header", function()
+      it("with the 'jwt' query parameter, contains the X-claims header", function()
         local r = assert(client:send {
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
@@ -121,10 +140,31 @@ for _, strategy in helpers.each_strategy() do
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
-        -- now check the response to have the header
+        -- now check the response to have the headers
         local header_value = assert.response(r).has.header("X-Jwt-ClaimX")
-        -- validate the value of that header
+        local header_value2 = assert.response(r).has.header("X-Jwt-ClaimY")
+        -- validate the value of that headers
         assert.equal("ClaimX value", header_value)
+        assert.equal("ClaimY value", header_value2)
+      end)
+
+      it("with a jwt as the Bearer token, contains the X-claims header", function()
+        local r = assert(client:send {
+          method = "GET",
+          path = "/request",  -- makes mockbin return the entire request
+          headers = {
+            authorization = "Bearer " .. jwt_for_test,
+            host = "test1.com",
+          }
+        })
+        -- validate that the request succeeded, response status 200
+        assert.response(r).has.status(200)
+        -- now check the response to have the headers
+        local header_value = assert.response(r).has.header("X-Jwt-ClaimX")
+        local header_value2 = assert.response(r).has.header("X-Jwt-ClaimY")
+        -- validate the value of that headers
+        assert.equal("ClaimX value", header_value)
+        assert.equal("ClaimY value", header_value2)
       end)
     end)
 

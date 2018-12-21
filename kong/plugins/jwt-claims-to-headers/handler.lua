@@ -84,8 +84,6 @@ function JwtClaimsToHeadersHandler:access(config)
 
     if claims_table ~= nil then
         for key, value in pairs(claims_table) do
-            -- TODO: create headers
-            kong.log.debug("@@@@@@ claim key is ", key, " key type is ", type(key), " value is ", value)
             local header = header_from_key(key, config)
             kong.log.debug("Set header: ", header, " value: ", value)
             if header ~= nil then
@@ -102,9 +100,11 @@ function JwtClaimsToHeadersHandler:access(config)
 
 end
 
+--[[
 function JwtClaimsToHeadersHandler:header_filter(config)
     -- kong.response.set_header(name, value)
 end
+]]
 
 
 return JwtClaimsToHeadersHandler

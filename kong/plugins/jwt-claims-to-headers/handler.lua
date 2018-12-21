@@ -92,12 +92,6 @@ function JwtClaimsToHeadersHandler:access(config)
         end
     end
 
-    -- TODO: delete test claims
-    ngx.header["X-Jwt-ClaimX"] = "ClaimX value"
-    ngx.req.set_header("X-Jwt-ClaimX", "ClaimX value")
-    ngx.header["X-Jwt-ClaimY"] = "ClaimY value"
-    ngx.req.set_header("X-Jwt-ClaimY", "ClaimY value")
-
 end
 
 --[[

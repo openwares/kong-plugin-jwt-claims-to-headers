@@ -101,13 +101,9 @@ for _, strategy in helpers.each_strategy() do
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
         -- now check the request (as echoed by mockbin) to have the headers
-        local header_value_claim_x = assert.request(r).has.header("X-Jwt-ClaimX")
-        local header_value_claim_y = assert.request(r).has.header("X-Jwt-ClaimY")
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
 
         -- validate the value of the headers
-        assert.equal("ClaimX value", header_value_claim_x)
-        assert.equal("ClaimY value", header_value_claim_y)
         assert.equal(test_key, header_value_claim_iss)
       end)
 
@@ -124,12 +120,8 @@ for _, strategy in helpers.each_strategy() do
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
         -- now check the request (as echoed by mockbin) to have the headers
-        local header_value_claim_x = assert.request(r).has.header("X-Jwt-ClaimX")
-        local header_value_claim_y = assert.request(r).has.header("X-Jwt-ClaimY")
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         -- validate the value of the headers
-        assert.equal("ClaimX value", header_value_claim_x)
-        assert.equal("ClaimY value", header_value_claim_y)
         assert.equal(test_key, header_value_claim_iss)
       end)
     end)
@@ -147,12 +139,8 @@ for _, strategy in helpers.each_strategy() do
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
         -- now check the response to have the headers
-        local header_value = assert.response(r).has.header("X-Jwt-ClaimX")
-        local header_value2 = assert.response(r).has.header("X-Jwt-ClaimY")
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         -- validate the value of that headers
-        assert.equal("ClaimX value", header_value)
-        assert.equal("ClaimY value", header_value2)
         assert.equal(test_key, header_value_claim_iss)
       end)
 
@@ -168,12 +156,8 @@ for _, strategy in helpers.each_strategy() do
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
         -- now check the response to have the headers
-        local header_value = assert.response(r).has.header("X-Jwt-ClaimX")
-        local header_value2 = assert.response(r).has.header("X-Jwt-ClaimY")
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         -- validate the value of that headers
-        assert.equal("ClaimX value", header_value)
-        assert.equal("ClaimY value", header_value2)
         assert.equal(test_key, header_value_claim_iss)
       end)
     end)

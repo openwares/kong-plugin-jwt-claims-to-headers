@@ -1,7 +1,14 @@
 local helpers = require "spec.helpers"
+local jwtParser = require "kong.plugins.jwt.jwt_parser"
 
--- jwt created for key 'test_key', with secret 'test_secret' and algorightm HS256
-local jwt_for_test = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2tleSJ9.Uj1YcRCeGAElh8zl6wm_RjjLzJ86GRoD5htP7HOx9yg"
+-- local jwt_for_test = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZXN0X2tleSJ9.Uj1YcRCeGAElh8zl6wm_RjjLzJ86GRoD5htP7HOx9yg"
+local algo = 'HS256'
+local test_key = 'test_key'
+local test_secret = 'test_secret'
+local jwt_for_test = jwtParser.encode({
+  iss = test_key
+}, test_secret, algo)
+
 
 -- The source code to setup and teardown Kong was borrowed from the Kong project
 -- spec/fixture contains fixtures directly borrowed from the Kong project
@@ -49,8 +56,8 @@ for _, strategy in helpers.each_strategy() do
       -- create jwt_secret
       local jwt_secret = bp.jwt_secrets:insert {
         consumer_id = consumer.id,
-        secret = "test_secret",
-        key = "test_key"
+        secret = test_secret,
+        key = test_key
       }
       jwt_secret_id = jwt_secret.id
       print("Created jwt_secret id " .. jwt_secret.id ..
@@ -101,9 +108,12 @@ for _, strategy in helpers.each_strategy() do
         -- now check the request (as echoed by mockbin) to have the headers
         local header_value_claim_x = assert.request(r).has.header("X-Jwt-ClaimX")
         local header_value_claim_y = assert.request(r).has.header("X-Jwt-ClaimY")
+        local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+
         -- validate the value of the headers
         assert.equal("ClaimX value", header_value_claim_x)
         assert.equal("ClaimY value", header_value_claim_y)
+        assert.equal(test_key, header_value_claim_iss)
       end)
 
       it("with a jwt as the Bearer token, contains the X-claims header", function()

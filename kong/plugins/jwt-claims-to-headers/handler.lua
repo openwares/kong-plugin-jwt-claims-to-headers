@@ -20,8 +20,12 @@ local function extract_jwt(config)
         kong.log.debug("jwt from auth header: ", jwt)
     end
 
+    -- TODO: since the jwt plugin supports sending a jwt in a cookie, this should support it as well.
+    -- TODO: there is no default cookie name for the jwt: the cookie name is specified in the parameter cookie_names
+
     if jwt == nil then
-        -- TODO: if there is a parameter that defines this name, then extract the jwt param name from the config, or default to 'jwt'
+        -- TODO: if there is a parameter that defines this name, then extract the jwt param name from the config, otherwise default to 'jwt'
+        -- TODO: support the parameter name uri_param_names, used in the Jwt plugin, which is a list of query string parameters to inspect
         -- kong.log.inspect(config)
         local jwt_param_name = JwtParamName
         jwt = kong.request.get_query_arg(jwt_param_name)

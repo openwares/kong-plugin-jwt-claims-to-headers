@@ -6,8 +6,14 @@ local jwtParser = require "kong.plugins.jwt.jwt_parser"
 local algo = 'HS256'
 local test_key = 'test_key'
 local test_secret = 'test_secret'
+local claim1 = 'test_claim1_key'
+local claim2 = 'test_claim2_key'
+local test_claim1_value = 'test_claim1_value'
+local test_claim2_value = 'test_claim2_value'
 local jwt_for_test = jwtParser.encode({
-  iss = test_key
+  iss = test_key,
+  claim1 = test_claim1_value,
+  claim2 = test_claim2_value
 }, test_secret, algo)
 
 
@@ -102,9 +108,13 @@ for _, strategy in helpers.each_strategy() do
         assert.response(r).has.status(200)
         -- now check the request (as echoed by mockbin) to have the headers
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+        local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
+        local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
 
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
       end)
 
 
@@ -121,8 +131,12 @@ for _, strategy in helpers.each_strategy() do
         assert.response(r).has.status(200)
         -- now check the request (as echoed by mockbin) to have the headers
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+        local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
+        local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
       end)
     end)
 
@@ -140,8 +154,12 @@ for _, strategy in helpers.each_strategy() do
         assert.response(r).has.status(200)
         -- now check the response to have the headers
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+        local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
+        local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
         -- validate the value of that headers
         assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
       end)
 
       it("with a jwt as the Bearer token, contains the X-claims header", function()
@@ -157,8 +175,12 @@ for _, strategy in helpers.each_strategy() do
         assert.response(r).has.status(200)
         -- now check the response to have the headers
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+        local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
+        local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
         -- validate the value of that headers
         assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
       end)
     end)
 

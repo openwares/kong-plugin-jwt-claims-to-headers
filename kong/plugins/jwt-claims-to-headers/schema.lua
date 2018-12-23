@@ -2,6 +2,7 @@ return {
     no_consumer = true, -- this plugin will only be applied to Services or Routes,
     fields = {
         { prefix = { type = "string", default = "X-Jwt-Claim-" }, },
+        --[[
         { claims_to_include = {
             type = "set",
             elements = {
@@ -12,6 +13,8 @@ return {
                 }
             }
         }, },
+        ]]
+        { claims_to_include = { type = "table" }, },
         { uri_param_names = {
             type = "set",
             elements = { type = "string" },

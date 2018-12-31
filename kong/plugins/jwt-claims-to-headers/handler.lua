@@ -43,7 +43,11 @@ local function header_from_key(key_name, config)
     -- TODO: check the config: first look for a mapping for the keys. If there is a mapping config, but none for this key, return nil
     -- TODO: if there is no mapping, look for a prefix. If there is no prefix, use the default prefix
 
-    local prefix = "X-Jwt-Claim-"
+    local prefix = config.header_prefix
+    if (prefix == nil) then
+        prefix = defaultHeaderPrefix
+    end
+
     return prefix .. key_name
 end
 
@@ -78,6 +82,9 @@ end
 -- Plugin functions ------------------------------
 function JwtClaimsToHeadersHandler:access(config)
     JwtClaimsToHeadersHandler.super.access(self)
+
+    kong.log.debug("@@@@@@ config:")
+    kong.log.inspect("@@@@@@ inspect config", config)
 
     local claims_table, err = claims(config)
     if err ~= nil then

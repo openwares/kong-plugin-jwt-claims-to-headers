@@ -15,10 +15,34 @@ local jwt_for_test = jwtParser.encode({
   claim1 = test_claim1_value,
   claim2 = test_claim2_value
 }, test_secret, algo)
+local test_prefix = "X-MyPrefix-"
 
 
 -- The source code to setup and teardown Kong was borrowed from the Kong project
 -- spec/fixture contains fixtures directly borrowed from the Kong project
+
+local function create_route(host_name, config, bp)
+  local routeWithDefaults = bp.routes:insert({
+    hosts = { host_name },
+  })
+
+  bp.plugins:insert {
+    name = "jwt",
+    route_id = routeWithDefaults.id,
+    config = {
+      uri_param_names="jwt",
+    },
+  }
+
+  bp.plugins:insert {
+    name = "jwt-claims-to-headers",
+    route_id = routeWithDefaults.id,
+    config = config,
+  }
+
+end
+
+
 for _, strategy in helpers.each_strategy() do
   describe("Jwt-Claims-to-Headers-Plugin: (access) [#" .. strategy .. "]", function()
     local client
@@ -28,23 +52,11 @@ for _, strategy in helpers.each_strategy() do
 
     setup(function()
 
-      local route1 = bp.routes:insert({
-        hosts = { "test1.com" },
-      })
-
-      bp.plugins:insert {
-        name = "jwt",
-        route_id = route1.id,
-        config = {
-          uri_param_names="jwt"
-        },
-      }
-
-      bp.plugins:insert {
-        name = "jwt-claims-to-headers",
-        route_id = route1.id,
-        config = {},
-      }
+      create_route("test-defaults.com", {}, bp)
+      create_route("test-header-prefix.com", {
+        header_prefix = "test",
+ --       header_prefix = test_prefix,
+      }, bp)
 
       -- create consumer
       local consumer = bp.consumers:insert {
@@ -80,6 +92,7 @@ for _, strategy in helpers.each_strategy() do
 
     teardown(function()
       -- TODO: delete the consumer with id consumer_id, and the jwt_secret with id jwt_secret_id
+      -- TODO: delete the hosts and routes
       -- bp.jwt_secrets:delete()
       helpers.stop_kong(nil, true)
     end)
@@ -93,14 +106,13 @@ for _, strategy in helpers.each_strategy() do
     end)
 
 
-
     describe("request", function()
       it("with the 'jwt' query parameter, contains the X-claims header", function()
         local r = assert(client:send {
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
           headers = {
-            host = "test1.com"
+            host = "test-defaults.com"
           },
           query= {jwt = jwt_for_test}
         })
@@ -124,7 +136,7 @@ for _, strategy in helpers.each_strategy() do
           path = "/request",  -- makes mockbin return the entire request
           headers = {
             authorization = "Bearer " .. jwt_for_test,
-            host = "test1.com"
+            host = "test-defaults.com"
           }
         })
         -- validate that the request succeeded, response status 200
@@ -140,13 +152,40 @@ for _, strategy in helpers.each_strategy() do
       end)
     end)
 
+    --[[
+    describe("request with config parameters", function()
+      it("with the 'prefix' config parameter, uses the prefix in the header names", function()
+        local r = assert(client:send {
+          method = "GET",
+          path = "/request",  -- makes mockbin return the entire request
+          headers = {
+            host = "test-defaults.com"
+          },
+          query= {jwt = jwt_for_test, prefix = test_prefix }
+        })
+        -- validate that the request succeeded, response status 200
+        assert.response(r).has.status(200)
+        -- now check the request (as echoed by mockbin) to have the headers
+        local header_value_claim_iss = assert.request(r).has.header(test_prefix .. "iss")
+        local header_value_claim1 = assert.request(r).has.header(test_prefix .. "claim1")
+        local header_value_claim2 = assert.request(r).has.header(test_prefix .. "claim2")
+
+        -- validate the value of the headers
+        assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
+      end)
+
+    end)
+    --]]
+
     describe("response", function()
       it("with the 'jwt' query parameter, contains the X-claims header", function()
         local r = assert(client:send {
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
           headers = {
-            host = "test1.com",
+            host = "test-defaults.com",
           },
           query= {jwt = jwt_for_test}
         })
@@ -168,7 +207,7 @@ for _, strategy in helpers.each_strategy() do
           path = "/request",  -- makes mockbin return the entire request
           headers = {
             authorization = "Bearer " .. jwt_for_test,
-            host = "test1.com",
+            host = "test-defaults.com",
           }
         })
         -- validate that the request succeeded, response status 200
@@ -191,7 +230,7 @@ for _, strategy in helpers.each_strategy() do
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
           headers = {
-            host = "test1.com",
+            host = "test-defaults.com",
           }
         })
 

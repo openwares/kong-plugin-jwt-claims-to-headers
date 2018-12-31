@@ -54,8 +54,7 @@ for _, strategy in helpers.each_strategy() do
 
       create_route("test-defaults.com", {}, bp)
       create_route("test-header-prefix.com", {
-        header_prefix = "test",
- --       header_prefix = test_prefix,
+        header_prefix = test_prefix,
       }, bp)
 
       -- create consumer
@@ -152,14 +151,13 @@ for _, strategy in helpers.each_strategy() do
       end)
     end)
 
-    --[[
     describe("request with config parameters", function()
       it("with the 'prefix' config parameter, uses the prefix in the header names", function()
         local r = assert(client:send {
           method = "GET",
           path = "/request",  -- makes mockbin return the entire request
           headers = {
-            host = "test-defaults.com"
+            host = "test-header-prefix.com"
           },
           query= {jwt = jwt_for_test, prefix = test_prefix }
         })
@@ -177,7 +175,6 @@ for _, strategy in helpers.each_strategy() do
       end)
 
     end)
-    --]]
 
     describe("response", function()
       it("with the 'jwt' query parameter, contains the X-claims header", function()

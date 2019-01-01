@@ -198,7 +198,6 @@ for _, strategy in helpers.each_strategy() do
         -- now check the request (as echoed by mockbin) to have the headers
         local header_value_claim_iss = assert.request(r).has.header(iss_custom_header)
         local header_value_claim1 = assert.request(r).has.header(claim1_custom_header)
-
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)

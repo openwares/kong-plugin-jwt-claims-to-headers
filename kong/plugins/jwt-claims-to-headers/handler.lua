@@ -39,16 +39,25 @@ local function extract_jwt(config)
     return jwt, err
 end
 
-local function header_from_key(key_name, config)
-    -- TODO: check the config: first look for a mapping for the keys. If there is a mapping config, but none for this key, return nil
-    -- TODO: if there is no mapping, look for a prefix. If there is no prefix, use the default prefix
+local function header_for_claim(claim_name, config)
 
-    local prefix = config.header_prefix
-    if (prefix == nil) then
-        prefix = defaultHeaderPrefix
+    -- if the config includes a table, claims_to_headers_table, that specifies a map of claims to headers, return the
+    -- header for this claim name. If a table exists, but there is no mapping for this claim, return nil
+    -- Otherwise, return a concatenation of the header_prefix and the key name. The header is specified in config.header_prefix.
+
+    local header = nil
+    local claims_to_headers_table = config.claims_to_headers_table
+    local header_prefix = config.header_prefix or defaultHeaderPrefix
+
+    if claims_to_headers_table ~= nil then
+        if claims_to_headers_table[claim_name] ~= nil then
+            header = claims_to_headers_table[claim_name]
+        end
+    else
+        header = header_prefix .. claim_name
     end
 
-    return prefix .. key_name
+    return header
 end
 
 local function claims(config)
@@ -85,6 +94,7 @@ function JwtClaimsToHeadersHandler:access(config)
 
     kong.log.debug("@@@@@@ config:")
     kong.log.inspect("@@@@@@ inspect config", config)
+    kong.log.inspect("@@@@@@ inspect claims_to_headers_table", config.claims_to_headers_table)
 
     local claims_table, err = claims(config)
     if err ~= nil then
@@ -95,9 +105,9 @@ function JwtClaimsToHeadersHandler:access(config)
 
     if claims_table ~= nil then
         for key, value in pairs(claims_table) do
-            local header = header_from_key(key, config)
-            kong.log.debug("Set header: ", header, " value: ", value)
+            local header = header_for_claim(key, config)
             if header ~= nil then
+                kong.log.debug("Set header: '", header, "' to value: '", value, "'")
                 kong.service.request.set_header(header, value)
             end
         end

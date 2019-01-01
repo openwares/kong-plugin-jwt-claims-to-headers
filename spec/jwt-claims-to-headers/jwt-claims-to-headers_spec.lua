@@ -10,6 +10,8 @@ local claim1 = 'test_claim1_key'
 local claim2 = 'test_claim2_key'
 local test_claim1_value = 'test_claim1_value'
 local test_claim2_value = 'test_claim2_value'
+local iss_custom_header = "issCustomHeader"
+local claim1_custom_header = "claim1CustomHeader"
 local jwt_for_test = jwtParser.encode({
   iss = test_key,
   claim1 = test_claim1_value,
@@ -56,6 +58,14 @@ for _, strategy in helpers.each_strategy() do
       create_route("test-header-prefix.com", {
         header_prefix = test_prefix,
       }, bp)
+      create_route("test-claims-to-headers-table.com", {
+        claims_to_headers_table = {
+          iss = iss_custom_header,
+          claim1 = claim1_custom_header
+        }
+      }
+      , bp)
+
 
       -- create consumer
       local consumer = bp.consumers:insert {
@@ -159,7 +169,7 @@ for _, strategy in helpers.each_strategy() do
           headers = {
             host = "test-header-prefix.com"
           },
-          query= {jwt = jwt_for_test, prefix = test_prefix }
+          query= {jwt = jwt_for_test }
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
@@ -174,7 +184,28 @@ for _, strategy in helpers.each_strategy() do
         assert.equal(test_claim2_value, header_value_claim2)
       end)
 
+      it("with the 'claims_to_headers_table' config parameter, uses the custom headers", function()
+        local r = assert(client:send {
+          method = "GET",
+          path = "/request",  -- makes mockbin return the entire request
+          headers = {
+            host = "test-claims-to-headers-table.com"
+          },
+          query= {jwt = jwt_for_test }
+        })
+        -- validate that the request succeeded, response status 200
+        assert.response(r).has.status(200)
+        -- now check the request (as echoed by mockbin) to have the headers
+        local header_value_claim_iss = assert.request(r).has.header(iss_custom_header)
+        local header_value_claim1 = assert.request(r).has.header(claim1_custom_header)
+
+        -- validate the value of the headers
+        assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+      end)
+
     end)
+
 
     describe("response", function()
       it("with the 'jwt' query parameter, contains the X-claims header", function()

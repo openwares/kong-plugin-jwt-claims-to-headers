@@ -18,17 +18,21 @@ local JwtParamName = "jwt"
 -- @return err
 local function retrieve_token(conf)
     local args = kong.request.get_query()
-    for _, v in ipairs(conf.uri_param_names) do
-        if args[v] then
-            return args[v]
+    if conf.uri_param_names ~= nil then
+        for _, v in ipairs(conf.uri_param_names) do
+            if args[v] and args[v] ~= "" then
+                return args[v]
+            end
         end
     end
 
-    local var = ngx.var
-    for _, v in ipairs(conf.cookie_names) do
-        local cookie = var["cookie_" .. v]
-        if cookie and cookie ~= "" then
-            return cookie
+    if conf.cookie_names ~= nil then
+        local var = ngx.var
+        for _, v in ipairs(conf.cookie_names) do
+            local cookie = var["cookie_" .. v]
+            if cookie and cookie ~= "" then
+                return cookie
+            end
         end
     end
 

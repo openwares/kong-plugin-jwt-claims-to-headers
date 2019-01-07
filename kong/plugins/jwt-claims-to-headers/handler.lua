@@ -1,5 +1,6 @@
 local BasePlugin = require "kong.plugins.base_plugin"
 local jwtParser = require "kong.plugins.jwt.jwt_parser"
+
 local JwtClaimsToHeadersHandler = BasePlugin:extend()
 
 -- ensure the priority is lower than the Jwt plugin, which has a priority of 1005
@@ -8,35 +9,45 @@ JwtClaimsToHeadersHandler.PRIORITY = 10
 local JwtParamName = "jwt"
 
 -- local functions ------------------------------
-local function extract_jwt(config)
-    local jwt
-    local err
-    local authHeader = kong.request.get_header("authorization")
-    kong.log.debug("authHeader: ", authHeader)
 
-    if authHeader ~= nil then
-        local bearer_pattern = "[Bb][Ee][Aa][Rr][Ee][Rr] "
-        jwt = string.gsub(authHeader, bearer_pattern, "")
-        kong.log.debug("jwt from auth header: ", jwt)
+--- Retrieve a JWT in a request.
+-- Checks for the JWT in URI parameters, then in cookies, and finally
+-- in the `Authorization` header.
+-- @param conf Plugin configuration
+-- @return token JWT token contained in request (can be a table) or nil
+-- @return err
+local function retrieve_token(conf)
+    local args = kong.request.get_query()
+    for _, v in ipairs(conf.uri_param_names) do
+        if args[v] then
+            return args[v]
+        end
     end
 
-    -- TODO: since the jwt plugin supports sending a jwt in a cookie, this should support it as well.
-    -- TODO: there is no default cookie name for the jwt: the cookie name is specified in the parameter cookie_names
-
-    if jwt == nil then
-        -- TODO: if there is a parameter that defines this name, then extract the jwt param name from the config, otherwise default to 'jwt'
-        -- TODO: support the parameter name uri_param_names, used in the Jwt plugin, which is a list of query string parameters to inspect
-        -- kong.log.inspect(config)
-        local jwt_param_name = JwtParamName
-        jwt = kong.request.get_query_arg(jwt_param_name)
+    local var = ngx.var
+    for _, v in ipairs(conf.cookie_names) do
+        local cookie = var["cookie_" .. v]
+        if cookie and cookie ~= "" then
+            return cookie
+        end
     end
 
-    -- TODO: error handling if no jwt is found - this may not necessary, since the 'jwt' plugin will return unauthorized before this is called
-    -- TODO: error handling if there is a jwt in the Bearer token and in a query parameter and they aren't the same:
-    -- TODO: return jwt, err. In the calling method, call: return kong.response.exit(400, "Bad Request: request should have a Bearer token or a jwt on a query parameter, not both")
-    -- TODO: see https://docs.konghq.com/0.14.x/pdk/kong.response/
+    local authorization_header = kong.request.get_header("authorization")
+    if authorization_header then
+        local iterator, iter_err = ngx.re.gmatch(authorization_header, "\\s*[Bb]earer\\s+(.+)")
+        if not iterator then
+            return nil, iter_err
+        end
 
-    return jwt, err
+        local m, err = iterator()
+        if err then
+            return nil, err
+        end
+
+        if m and #m > 0 then
+            return m[1]
+        end
+    end
 end
 
 local function header_for_claim(claim_name, config)
@@ -60,21 +71,12 @@ local function header_for_claim(claim_name, config)
     return header
 end
 
-local function claims(config)
+local function claims(jwt, config)
 
-    local jwt, err = extract_jwt(config)
-    if err ~= nil or jwt == nil then
-        -- TODO: handle an error
-        kong.log.err("Error extracting the jwt: ", err, " jwt: ", jwt)
+    local jwt_table, err = jwtParser:new(jwt)
+    if err ~= nil then
+        kong.log.err("Error parsing the jwt: ", err, " jwt: ", jwt)
         return nil, err
-    end
-    kong.log.debug("Jwt is : ", jwt)
-
-    local jwt_table, err2 = jwtParser:new(jwt)
-    if err2 ~= nil then
-        -- TODO: handle an error
-        kong.log.err("Error parsing the jwt: ", err2, " jwt: ", jwt)
-        return nil, err2
     end
 
     local claims_table = jwt_table["claims"]
@@ -89,18 +91,31 @@ function JwtClaimsToHeadersHandler:new()
 end
 
 -- Plugin functions ------------------------------
+
+--- Access
+-- If there is a jwt, extract its claims and set a header for each claims, as specified in config parameters
+-- If there is no jwt, log an info message and return
+-- @param config Plugin configuration
 function JwtClaimsToHeadersHandler:access(config)
     JwtClaimsToHeadersHandler.super.access(self)
 
-    kong.log.debug("@@@@@@ config:")
-    kong.log.inspect("@@@@@@ inspect config", config)
-    kong.log.inspect("@@@@@@ inspect claims_to_headers_table", config.claims_to_headers_table)
-
-    local claims_table, err = claims(config)
+    local jwt, err = retrieve_token(config)
     if err ~= nil then
-        -- TODO: handle an error
-        kong.log.err("Error parsing the jwt: ", err, " jwt: ", jwt)
-        return nil, err
+        kong.log.err("Error extracting the jwt: ", err, " jwt: ", jwt)
+        return
+    end
+
+    if jwt == nil then
+        kong.log.info("There is no jwt, returning without setting claims to headers")
+        return
+    end
+
+    kong.log.debug("Jwt is : ", jwt)
+
+    local claims_table, err = claims(jwt, config)
+    if err ~= nil then
+        kong.log.err("Error extracting claims: ", err, " jwt: ", jwt)
+        return
     end
 
     if claims_table ~= nil then

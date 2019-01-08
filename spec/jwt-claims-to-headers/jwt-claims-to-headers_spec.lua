@@ -18,12 +18,13 @@ local jwt_for_test = jwtParser.encode({
   claim2 = test_claim2_value
 }, test_secret, algo)
 local test_prefix = "X-MyPrefix-"
+local jwt_param_name = "custom_jwt"
 
 
 -- The source code to setup and teardown Kong was borrowed from the Kong project
 -- spec/fixture contains fixtures directly borrowed from the Kong project
 
-local function create_route(host_name, config, bp)
+local function create_route(host_name, jwt_config, jwt_claims_to_header_config, bp)
   local routeWithDefaults = bp.routes:insert({
     hosts = { host_name },
   })
@@ -31,15 +32,13 @@ local function create_route(host_name, config, bp)
   bp.plugins:insert {
     name = "jwt",
     route_id = routeWithDefaults.id,
-    config = {
-      uri_param_names="jwt",
-    },
+    config = jwt_config,
   }
 
   bp.plugins:insert {
     name = "jwt-claims-to-headers",
     route_id = routeWithDefaults.id,
-    config = config,
+    config = jwt_claims_to_header_config,
   }
 
 end
@@ -54,17 +53,36 @@ for _, strategy in helpers.each_strategy() do
 
     setup(function()
 
-      create_route("test-defaults.com", {}, bp)
-      create_route("test-header-prefix.com", {
-        header_prefix = test_prefix,
-      }, bp)
-      create_route("test-claims-to-headers-table.com", {
-        claims_to_headers_table = {
-          iss = iss_custom_header,
-          claim1 = claim1_custom_header
-        }
-      }
-      , bp)
+      -- create a route to test each parameter
+
+      create_route("test-defaults.com",
+              {},
+              {},
+              bp)
+
+      create_route("test-header-prefix.com",
+              {},
+              { header_prefix = test_prefix },
+              bp)
+
+      create_route("test-claims-to-headers-table.com",
+              {},
+              {
+                claims_to_headers_table = {
+                  iss = iss_custom_header,
+                  claim1 = claim1_custom_header
+                }
+              },
+              bp)
+
+      create_route("test-uri-param-names.com",
+              {
+                uri_param_names= { jwt_param_name },
+              },
+              {
+                uri_param_names = { jwt_param_name }
+              },
+              bp)
 
 
       -- create consumer
@@ -123,7 +141,7 @@ for _, strategy in helpers.each_strategy() do
           headers = {
             host = "test-defaults.com"
           },
-          query= {jwt = jwt_for_test}
+          query= { jwt = jwt_for_test }
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
@@ -169,7 +187,7 @@ for _, strategy in helpers.each_strategy() do
           headers = {
             host = "test-header-prefix.com"
           },
-          query= {jwt = jwt_for_test }
+          query= { jwt = jwt_for_test }
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
@@ -191,7 +209,7 @@ for _, strategy in helpers.each_strategy() do
           headers = {
             host = "test-claims-to-headers-table.com"
           },
-          query= {jwt = jwt_for_test }
+          query= { jwt = jwt_for_test }
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)
@@ -201,6 +219,28 @@ for _, strategy in helpers.each_strategy() do
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
+      end)
+
+      it("with uri_param_names specifying the location of the jwt, contains the X-claims header", function()
+        local r = assert(client:send {
+          method = "GET",
+          path = "/request",  -- makes mockbin return the entire request
+          headers = {
+            host = "test-uri-param-names.com"
+          },
+          query= { custom_jwt = jwt_for_test }
+        })
+        -- validate that the request succeeded, response status 200
+        assert.response(r).has.status(200)
+        -- now check the request (as echoed by mockbin) to have the headers
+        local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
+        local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
+        local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+
+        -- validate the value of the headers
+        assert.equal(test_key, header_value_claim_iss)
+        assert.equal(test_claim1_value, header_value_claim1)
+        assert.equal(test_claim2_value, header_value_claim2)
       end)
 
     end)
@@ -214,7 +254,7 @@ for _, strategy in helpers.each_strategy() do
           headers = {
             host = "test-defaults.com",
           },
-          query= {jwt = jwt_for_test}
+          query= { jwt = jwt_for_test }
         })
         -- validate that the request succeeded, response status 200
         assert.response(r).has.status(200)

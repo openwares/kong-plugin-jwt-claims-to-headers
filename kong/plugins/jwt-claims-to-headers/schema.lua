@@ -19,12 +19,12 @@ return {
             default = nil
         },
         uri_param_names = {
-            type = "set",
+            type = "array",
             elements = { type = "string" },
             default = { "jwt" },
         },
         cookie_names = {
-            type = "set",
+            type = "array",
             elements = { type = "string" },
             default = {}
         }

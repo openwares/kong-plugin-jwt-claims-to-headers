@@ -17,11 +17,9 @@ local JwtParamName = "jwt"
 -- @return token JWT token contained in request (can be a table) or nil
 -- @return err
 local function retrieve_token(conf)
-    kong.log.debug("@@@@@ Conf:")
-    kong.log.inspect(conf)
-    kong.log.debug("@@@@@ uri_param_names are ", conf.uri_param_names)
-    kong.log.debug("@@@@@ uri_param_name is ", conf.uri_param_names[1])
-    kong.log.debug("@@@@@ size is ", table.getn(conf.cookie_names))
+    -- kong.log.debug("@@@@@ Config:")
+    -- kong.log.inspect(conf)
+    -- kong.log.debug("@@@@@ size is ", table.getn(conf.cookie_names))
 
     local args = kong.request.get_query()
     if conf.uri_param_names ~= nil then

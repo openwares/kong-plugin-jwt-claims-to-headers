@@ -1,42 +1,43 @@
 language: c
-
 sudo: true
-
 services:
   - postgresql
   - cassandra
-
 addons:
   postgresql: '9.6'
 env:
   global:
     - LUAROCKS=2.3.0
+    # LUAROCKS_API_KEY
+    - secure: ltDKE1FoiIgsRMX2Aue8S5b7ykP/34CQ5QfkFiwU+EHmY/bXrM0sGZ669T6vSLZSNmpRcrb+iUQ+vzLtubqqAnn1x055VVjUAex8xoPNDBAs26EWJd7oHMx6xTvMpAwoF3901d76l8dYkYkLiS7pl4PwM1W+8ZLsl4QfB8ALK85wiQrOrfRlpIFRvHHrSeRi1gqKd0T6R4V2moPc2Lqc67KI+rPfDyva3Kpub1IlC2x4r1U0dJzm4xn6hAIA5R7aQFHrRaU9PTGsGQ+ZkOOROhX0XUvf97U2lZE0v/0lELEnZQ6q/cmSvskuFBjANA73JB7HMrJ45xu9OqBu6NK7+/rLhY0ByxJbhnkyxjQgmTXEqNn/gxYgVgWBPUteVQsLP4GJiWrW7vd36bCScvO05YonqeBtZgTQHWJtqJ/q0Eqaxqg1tmEd3M7XThrz0LFMsuAVlHZDRTsewoL1LM3dJ91XII44AqbbpGX6J6w88CwyQk8URkJ5BnQDDo650aFSiuRplctiq7p7CLr9PJg2kRwXTZ7PC13qXEkGXth8E1vVs6fNsHq49LkBmsSWn1hbHpEFOn0r8FNUR3bdrDvdRTew+fz/9Y+VS7qyME5d05szdQVUZ9pL6bwW24tn/+LjtPAEmK92jLQiiJYabVexg0KiEwzyueO0uYDsMApYlIs=
   matrix:
     - LUA=lua5.1
-    # - LUA=lua5.2
-    # - LUA=lua5.3
-    # - LUA=luajit # latest stable version (2.0.4)
-    # - LUA=luajit2.0 # current head of 2.0 branch
-    # - LUA=luajit2.1 # current head of 2.1 branch
-
 branches:
   only:
     - master
-
 before_script:
   - psql -c 'CREATE USER kong;' -U postgres
   - psql -c 'CREATE DATABASE kong OWNER kong;' -U postgres
   - psql -c 'CREATE USER kong_tests;' -U postgres
   - psql -c 'CREATE DATABASE kong_tests OWNER kong_tests;' -U postgres
-
 install:
   - sudo apt-get update
   - sudo apt-get install openssl libpcre3 procps perl
-  - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb > kong-community-edition-0.14.1.trusty.all.deb
+  - curl -L0 https://bintray.com/kong/kong-community-edition-deb/download_file\?file_path\=dists/kong-community-edition-0.14.1.trusty.all.deb
+    > kong-community-edition-0.14.1.trusty.all.deb
   - sudo dpkg -i kong-community-edition-0.14.1.trusty.all.deb
   - ls /usr/local/openresty/bin
   - export PATH=/usr/local/openresty/bin:$PATH
   - sudo luarocks install busted
-
 script:
-  - ./bin/busted
+  - './bin/busted'
+  - luarocks pack kong-plugin-jwt-claims-to-headers-0.1.0-1.rockspec
+  - luarocks upload kong-plugin-jwt-claims-to-headers-0.1.0-1.rockspec --api-key=${LUAROCKS_API_KEY}
+deploy:
+  provider: releases
+  api_key:
+    secure: Es+cgcgnaRQDMklnANoZFrvNWxMtw4AN6WJCkzfwR9Lg5Fp/18p9mPD1r0JE6LeRp0rYZAs3K1ci5AgYDxVJET3JQbsAGZ6FugKFd1ymm7f4QZiAzWnM+HnBY7xbr7GHeJWc/QxmScX5vzXiYI/wcaznthG9dja1z7tMEH/EQ22h1kAC6G+JE1RjjvrqjHT81j3IVsaxhQLQORBM/jmu/Tjg1Xryqi4lO8tLar5j/XCkYQuD8E8FHaxRF+vStzWWjv02JFmAWRJj+AVGau7IC8GdcPTJXMGJchI3iUyh8VHsA0LHU65gcga7yn+TpjKy9OranCWG9pCxrPzqy2TCFxLJy/xu9QZwzBYr4cUmR9oaL3D5nbtY2peVI+HybAgGwiQC2aoOO1QmrkgBNWnDMvX/KiaJCBQOHLESszXdz3ik7StTJlAryCAs9dCgwWg8Yk++qSqbKPAAVywSTTmy2JfI8GOkYttkuvQs2NJRjVlM4mZJp3TPeqMD5vRcD4GoZnkoEfE+y/lLYV39ka/H1YlfBbRxt1x/KX71hpzPtiZ/lDr7BsVZMrw4s0+aySp69OiMcS7zGI3WkTXd2hg/GrdCl9jthXpXSe7CrsDSb3y27tqcsjMa+QVdZvEq1DsR+8+GfyuqoO6wdwboPVCDDnMtGEasUfaW31RwHHTC1Ro=
+  file: kong-plugin-jwt-claims-to-headers-0.1.0-1.src.rock
+  skip_cleanup: true
+  on:
+    tags: true

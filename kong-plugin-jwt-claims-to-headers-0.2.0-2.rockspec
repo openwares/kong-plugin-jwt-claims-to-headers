@@ -15,7 +15,7 @@ source = {
 }
 
 description = {
-  summary = "Extracts specific JWT claims and adds them as headers",
+  summary = "Extracts JWT claims and adds them as HTTP request headers",
   homepage = "http://github.com/cdimascio/kong-plugin-jwt-claims-to-headers",
   license = "Apache 2.0"
 }

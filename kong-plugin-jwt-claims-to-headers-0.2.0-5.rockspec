@@ -11,7 +11,7 @@ local pluginName = package:match("^kong%-plugin%-(.+)$")
 supported_platforms = {"linux", "macosx"}
 source = {
   url = "git://github.com/cdimascio/kong-plugin-jwt-claims-to-headers.git",
-  tag = "0.2.0"
+  tag = "master"
 }
 
 description = {

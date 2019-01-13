@@ -32,7 +32,7 @@ install:
 script:
   - './bin/busted'
   - luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
-  - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
+  # - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
 before_deploy:
   - export TRAVIS_TAG=${TRAVIS_TAG}-${VERSION}
   - git tag $TRAVIS_TAG
@@ -42,5 +42,5 @@ deploy:
     secure: Es+cgcgnaRQDMklnANoZFrvNWxMtw4AN6WJCkzfwR9Lg5Fp/18p9mPD1r0JE6LeRp0rYZAs3K1ci5AgYDxVJET3JQbsAGZ6FugKFd1ymm7f4QZiAzWnM+HnBY7xbr7GHeJWc/QxmScX5vzXiYI/wcaznthG9dja1z7tMEH/EQ22h1kAC6G+JE1RjjvrqjHT81j3IVsaxhQLQORBM/jmu/Tjg1Xryqi4lO8tLar5j/XCkYQuD8E8FHaxRF+vStzWWjv02JFmAWRJj+AVGau7IC8GdcPTJXMGJchI3iUyh8VHsA0LHU65gcga7yn+TpjKy9OranCWG9pCxrPzqy2TCFxLJy/xu9QZwzBYr4cUmR9oaL3D5nbtY2peVI+HybAgGwiQC2aoOO1QmrkgBNWnDMvX/KiaJCBQOHLESszXdz3ik7StTJlAryCAs9dCgwWg8Yk++qSqbKPAAVywSTTmy2JfI8GOkYttkuvQs2NJRjVlM4mZJp3TPeqMD5vRcD4GoZnkoEfE+y/lLYV39ka/H1YlfBbRxt1x/KX71hpzPtiZ/lDr7BsVZMrw4s0+aySp69OiMcS7zGI3WkTXd2hg/GrdCl9jthXpXSe7CrsDSb3y27tqcsjMa+QVdZvEq1DsR+8+GfyuqoO6wdwboPVCDDnMtGEasUfaW31RwHHTC1Ro=
   file: kong-plugin-jwt-claims-to-headers-${VERSION}.src.rock
   skip_cleanup: true
-  on:
-    tags: true
+  # on:
+  #   tags: true

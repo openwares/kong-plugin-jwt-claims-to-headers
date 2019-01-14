@@ -55,7 +55,7 @@ luarocks make
 Create the lua rock
 
 ```shell
-luarocks pack kong-plugin-jwt-claims-to-headers 0.1.0-1
+luarocks make --pack-binary-rock
 ```
 
 ### Install

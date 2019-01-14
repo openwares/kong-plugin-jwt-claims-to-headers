@@ -33,9 +33,9 @@ script:
   - './bin/busted'
   - luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
   # - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
-before_deploy:
-  - export TRAVIS_TAG=${TRAVIS_TAG}-${VERSION}
-  - git tag $TRAVIS_TAG
+# before_deploy:
+#   - export TRAVIS_TAG=${TRAVIS_TAG}-${VERSION}
+#   - git tag $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:

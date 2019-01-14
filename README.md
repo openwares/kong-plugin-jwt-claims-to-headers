@@ -16,9 +16,7 @@ A Kong plugin that extracts JWT claims and apply them to HTTP request headers.
 luarocks install kong-plugin-jwt-claims-to-headers
 ```
 
-#### Add the plugin to Kong
-
-Add the plugin to the `plugins` list in in `kong.conf` (for each Kong node):
+Next, add the plugin to the `plugins` list in in `kong.conf` (for each Kong node):
 
 ```shell
 plugins = bundled, jwt-claims-to-headers

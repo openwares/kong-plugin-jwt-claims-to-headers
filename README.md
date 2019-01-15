@@ -26,7 +26,6 @@ _**Note:** The above loads Kong's bundled plugins and jwt-claims-to-headers_
 
 - [Manual Install](#manual-install)
 - [Uninstall](#uninstall)
----
 
 ## Usage
 

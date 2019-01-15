@@ -32,7 +32,9 @@ _**Note:** The above loads Kong's bundled plugins and jwt-claims-to-headers_
 
 _coming soon..._
 
-## Alternate Installation Options
+## Installation
+
+The [setup](#setup) section describes the recommended installation method. The methods below describe 1. manually installing the plugin, 2. validating the that the plugin was installed properly, and 3. uninstalling the plugin
 
 ### Manual install
 

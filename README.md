@@ -8,7 +8,7 @@ A Kong plugin that extracts JWT claims and apply them to HTTP request headers.
 <img src="https://raw.githubusercontent.com/cdimascio/kong-plugin-jwt-claims-to-headers/master/assets/jwt-claims-to-headers-logo.png" width="400"/>
 </p>
 
-## Installation
+## Setup
 
 ### Install the plugin
 
@@ -24,7 +24,15 @@ plugins = bundled, jwt-claims-to-headers
 
 _**Note:** The above loads Kong's bundled plugins and jwt-claims-to-headers_
 
+- [Manual Install](#manual-install)
+- [Uninstall](#uninstall)
 ---
+
+## Usage
+
+_coming soon..._
+
+## Alternate Installation Options
 
 ### Manual install
 

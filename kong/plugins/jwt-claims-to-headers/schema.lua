@@ -20,12 +20,10 @@ return {
         },
         uri_param_names = {
             type = "array",
-            elements = { type = "string" },
             default = { "jwt" },
         },
         cookie_names = {
             type = "array",
-            elements = { type = "string" },
             default = {}
         }
     }

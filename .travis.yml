@@ -8,7 +8,7 @@ addons:
 env:
   global:
     - LUAROCKS=2.3.0
-    - VERSION=0.2.0-6
+    - VERSION=0.3.1-6
     # LUAROCKS_API_KEY
     - secure: ltDKE1FoiIgsRMX2Aue8S5b7ykP/34CQ5QfkFiwU+EHmY/bXrM0sGZ669T6vSLZSNmpRcrb+iUQ+vzLtubqqAnn1x055VVjUAex8xoPNDBAs26EWJd7oHMx6xTvMpAwoF3901d76l8dYkYkLiS7pl4PwM1W+8ZLsl4QfB8ALK85wiQrOrfRlpIFRvHHrSeRi1gqKd0T6R4V2moPc2Lqc67KI+rPfDyva3Kpub1IlC2x4r1U0dJzm4xn6hAIA5R7aQFHrRaU9PTGsGQ+ZkOOROhX0XUvf97U2lZE0v/0lELEnZQ6q/cmSvskuFBjANA73JB7HMrJ45xu9OqBu6NK7+/rLhY0ByxJbhnkyxjQgmTXEqNn/gxYgVgWBPUteVQsLP4GJiWrW7vd36bCScvO05YonqeBtZgTQHWJtqJ/q0Eqaxqg1tmEd3M7XThrz0LFMsuAVlHZDRTsewoL1LM3dJ91XII44AqbbpGX6J6w88CwyQk8URkJ5BnQDDo650aFSiuRplctiq7p7CLr9PJg2kRwXTZ7PC13qXEkGXth8E1vVs6fNsHq49LkBmsSWn1hbHpEFOn0r8FNUR3bdrDvdRTew+fz/9Y+VS7qyME5d05szdQVUZ9pL6bwW24tn/+LjtPAEmK92jLQiiJYabVexg0KiEwzyueO0uYDsMApYlIs=
   matrix:
@@ -32,7 +32,7 @@ install:
 script:
   - './bin/busted'
   - luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
-  # - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
+  - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
 # before_deploy:
 #   - export TRAVIS_TAG=${TRAVIS_TAG}-${VERSION}
 #   - git tag $TRAVIS_TAG

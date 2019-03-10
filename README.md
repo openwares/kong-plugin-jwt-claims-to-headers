@@ -51,22 +51,18 @@ curl --request POST \
 Add all JWT claims as headers using a custom prefix
 
 ```shell
-{
+  --data '{
 	"name": "jwt-claims-to-headers",
 	"route_id": "71d39596-0f13-40ce-be00-cc21d2dc16f7",
 	"config": {
 		"header_prefix": "x-custom-prefix-"
 	}
-}
+}'
 ```
 
 Add JWT `iss` claim as header with custom name
 
 ```shell
-curl --request POST \
-  --url http://localhost:8001/services/my-service/plugins/ \
-  --header 'accept: application/json' \
-  --header 'content-type: application/json' \
   --data '{
 	"name": "jwt-claims-to-headers",
 	"route_id": "7d04ba54-b019-4e38-b450-e66a2284f1aa",

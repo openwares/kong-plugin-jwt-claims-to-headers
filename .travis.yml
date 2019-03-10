@@ -30,9 +30,10 @@ branches:
   # - export PATH=/usr/local/openresty/bin:$PATH
   # - sudo luarocks install busted
 script:
+  - echo 'skip'
   # - './bin/busted'
-  - luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
-  - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
+  # - luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
+  # - luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
 deploy:
   provider: releases
   api_key:

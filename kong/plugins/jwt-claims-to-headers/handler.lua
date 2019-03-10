@@ -6,8 +6,6 @@ local JwtClaimsToHeadersHandler = BasePlugin:extend()
 -- ensure the priority is lower than the Jwt plugin, which has a priority of 1005
 JwtClaimsToHeadersHandler.PRIORITY = 10
 
-local JwtParamName = "jwt"
-
 -- local functions ------------------------------
 
 --- Retrieve a JWT in a request.
@@ -60,9 +58,11 @@ end
 
 local function header_for_claim(claim_name, config)
 
-    -- if the config includes a table, claims_to_headers_table, that specifies a map of claims to headers, return the
-    -- header for this claim name. If a table exists, but there is no mapping for this claim, return nil
-    -- Otherwise, return a concatenation of the header_prefix and the key name. The header is specified in config.header_prefix.
+    -- if the config includes a table, claims_to_headers_table, that specifies a map of claims to headers,
+    -- return the header for this claim name.
+    -- If a table exists, but there is no mapping for this claim, return nil
+    -- Otherwise, return a concatenation of the header_prefix and the key name.
+    -- The header is specified in config.header_prefix.
 
     local header = nil
     local claims_to_headers_table = config.claims_to_headers_table

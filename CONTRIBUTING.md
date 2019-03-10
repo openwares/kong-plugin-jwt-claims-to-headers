@@ -86,12 +86,18 @@ luarocks make
 
 From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:
 
-Create the lua rock
+Create the lua rock and upload
+
+```shell
+luarocks pack kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec
+luarocks upload kong-plugin-jwt-claims-to-headers-${VERSION}.rockspec --api-key=${LUAROCKS_API_KEY}
+```
+
+or binary rock
 
 ```shell
 luarocks make --pack-binary-rock
-```
-
+``
 ### Install
 
 From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:

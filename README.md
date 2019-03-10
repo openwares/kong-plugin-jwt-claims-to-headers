@@ -29,6 +29,56 @@ plugins = bundled,jwt-claims-to-headers
 
 _coming soon..._
 
+### Examples
+
+Add all JWT claims as headers using the default prefix `X-JWT-Claim-`
+
+```shell
+curl --request POST \
+  --url http://localhost:8001/services/my-service/plugins/ \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{
+	"name": "jwt-claims-to-headers",
+	"route_id": "71d39596-0f13-40ce-be00-cc21d2dc16f7",
+	"config": {
+		"header_prefix": "x-custom-prefix-"
+	}
+}'
+```
+
+Add all JWT claims as headers using a custom prefix
+
+```shell
+{
+	"name": "jwt-claims-to-headers",
+	"route_id": "71d39596-0f13-40ce-be00-cc21d2dc16f7",
+	"config": {
+		"header_prefix": "x-custom-prefix-"
+	}
+}
+```
+
+Add JWT `iss` claim as header with custom name
+
+```shell
+curl --request POST \
+  --url http://localhost:8001/services/my-service/plugins/ \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{
+	"name": "jwt-claims-to-headers",
+	"route_id": "7d04ba54-b019-4e38-b450-e66a2284f1aa",
+	"config": {
+		"claims_to_headers_table": {
+			"iss": "x-table-iss"
+		}
+	}
+}'
+```
+
+
+
 ## Installation
 
 The [setup](#setup) section describes the recommended installation method. The sub-sections below describe 1. manually installing the plugin, 2. validating the that the plugin was installed properly, and 3. uninstalling the plugin

@@ -99,7 +99,7 @@ From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:
 Install your newly generated rock
 
 ```shell
-luarocks install kong-plugin-jwt-claims-to-headers-0.1.0-1.all.rock
+luarocks install kong-plugin-jwt-claims-to-headers-1.0.0-1.all.rock
 ```
 
 Add the plugin’s name to the plugins list in your Kong configuration (on each Kong node):

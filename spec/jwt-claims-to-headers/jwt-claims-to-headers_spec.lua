@@ -6,8 +6,6 @@ local jwtParser = require "kong.plugins.jwt.jwt_parser"
 local algo = 'HS256'
 local test_key = 'test_key'
 local test_secret = 'test_secret'
-local claim1 = 'test_claim1_key'
-local claim2 = 'test_claim2_key'
 local test_claim1_value = 'test_claim1_value'
 local test_claim2_value = 'test_claim2_value'
 local iss_custom_header = "issCustomHeader"
@@ -48,8 +46,6 @@ for _, strategy in helpers.each_strategy() do
   describe("Jwt-Claims-to-Headers-Plugin: (access) [#" .. strategy .. "]", function()
     local client
     local bp = helpers.get_db_utils(strategy)
-    local consumer_id
-    local jwt_secret_id
 
     setup(function()
 
@@ -80,8 +76,8 @@ for _, strategy in helpers.each_strategy() do
         username = "testUser1",
         custom_id = "testCustomId"
       }
-      consumer_id = consumer.id
-      print("Created consumer id " .. consumer.id .. 
+
+      print("Created consumer id " .. consumer.id ..
               ", at epoch time " .. consumer.created_at)
 
       -- create jwt_secret
@@ -90,7 +86,7 @@ for _, strategy in helpers.each_strategy() do
         secret = test_secret,
         key = test_key
       }
-      jwt_secret_id = jwt_secret.id
+
       print("Created jwt_secret id " .. jwt_secret.id ..
               ", at epoch time " .. jwt_secret.created_at ..
               ", key " .. jwt_secret.key ..
@@ -103,7 +99,7 @@ for _, strategy in helpers.each_strategy() do
         -- use the custom test template to create a local mock server
         nginx_conf = "spec/fixtures/custom_nginx.template",
         -- set the config item to make sure our plugin gets loaded
-        plugins = "bundled,jwt,jwt-claims-to-headers", 
+        plugins = "bundled,jwt,jwt-claims-to-headers",
       }))
     end)
 

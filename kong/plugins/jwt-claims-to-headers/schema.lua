@@ -16,11 +16,21 @@ return {
         },
         claims_to_headers_table = {
             type = "table",
-            default = nil
+            default = nil,
+            schema = {},
+            new_type = {
+                type = "map",
+                keys = {
+                    type = "string"
+                },
+                values = {
+                    type = "string"
+                }
+            }
         },
         uri_param_names = {
             type = "array",
-            default = { "jwt" },
+            default = {"jwt"}
         },
         cookie_names = {
             type = "array",
@@ -33,5 +43,4 @@ return {
     --   -- perform any custom verification
     --   return true
     -- end
-
 }

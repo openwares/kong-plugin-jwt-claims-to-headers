@@ -1,56 +1,90 @@
 # Contributing: kong-jwt-claims-to-headers
 
-# Prerequisites
+## Prerequisites
 
-To run tests locally, you will need to install Kong, PostgreSQL, and Cassandra
+1. Install Vagrant (and VirtualBox)
 
-- [Kong 0.14.1](https://konghq.com/install/)
-- [PostgreSQL](https://www.postgresql.org/download/)
-- [Cassandra](http://cassandra.apache.org/download/) (or use brew on mac)
+## Development Environment Setup
 
-  After installing PostgreSQL, you must create a db and user for `kong` and `kong_tests`. To do so:
+The instructions below are a trimmed down variant of [kong-vagrant](https://github.com/Kong/kong-vagrant/) that targets kong-plugin-jwt-claims-to-headers. If you run into issue, please visit [kong-vagrant](https://github.com/Kong/kong-vagrant/) first.
+
+Comments annotated with `***` denote a difference from [kong-vagrant](https://github.com/Kong/kong-vagrant/)
+
+### Preparing the development environment
+
+Once you have Vagrant installed, follow these steps to set up a development
+environment for both Kong itself as well as for custom plugins. It will
+install the development dependencies like the `busted` test framework.
 
 ```shell
-psql -c 'CREATE USER kong;' -U postgres
-psql -c 'CREATE DATABASE kong OWNER kong;' -U postgres
-psql -c 'CREATE USER kong_tests;' -U postgres
-psql -c 'CREATE DATABASE kong_tests OWNER kong_tests;' -U postgres
+# clone this repository
+$ git clone https://github.com/Kong/kong-vagrant
+$ cd kong-vagrant
+
+# clone the Kong repo (inside the vagrant one)
+$ git clone https://github.com/Kong/kong
+
+# *** clone kong-plugin-jwt-claims-plugin to kong-plugin
+# if you choose to place kong-plugin-jwt-claims into a different directory, set KONG_PLUGIN_PATH to that directory
+$ git clone https://github.com/openwares/kong-plugin-jwt-claims-to-headers kong-plugin
+
+# build a box with a folder synced to your local Kong and plugin sources
+$ vagrant up
+
+# ssh into the Vagrant machine, and setup the dev environment
+$ vagrant ssh
+
+$ cd /kong
+$ make dev
+
+# *** enable jwt-claims-to-headers plugin
+$ export KONG_PLUGINS=bundled,jwt-claims-to-headers
+
+# startup kong: while inside '/kong' call `kong` from the repo as `bin/kong`!
+# we will also need to ensure that migrations are up to date
+$ cd /kong
 ```
 
+This will tell Vagrant to mount your local Kong repository under the guest's
+`/kong` folder, and the 'kong-plugin-jwt-claims-to-headers' repository under the
+guest's `/kong-plugin` folder.
 
-- Start Cassandra `cassandra -f`
-- Start Postgres `pg_ctl -D /usr/local/var/postgres start`
-- Download [kong.conf](https://raw.githubusercontent.com/Kong/kong/0.14.1/kong.conf.default)
-  - Uncomment and update any custom values in the cassandra and postgres sections e.g. `pg_password`. If everything is installed locally with defaults, you likely do not need to uncomment or edit.
-- Start Kong `kong start -c /path/to/my/kong.conf` to verify it works
-- Stop Kong
-
-Next, run the tests to verify everything is all good!
-
-# Install dependencies
-
-- Busted `luarocks install busted`
-
-# Test
+### Run the tests
 
 ```shell
-./bin/busted
+# ssh into the Vagrant machine
+$ vagrant ssh
+
+# start the linter from the plugin repository
+$ cd /kong-plugin
+$ luacheck .
+
+# testing: while inside '/kong' call `busted` from the repo as `bin/busted`,
+# but specify the plugin testsuite to be executed
+$ cd /kong
+$ bin/busted /kong-plugin/spec
 ```
 
 # Develop
 
 Write code and submit a PR
 
+In the `kong-plugin` folder:
+
 - Source code: `kong/plugins/jwt-claims-to-headers`
 - Tests: `spec/jwt-claims-to-headers`
 
 ## Build
+
+From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:
 
 ```shell
 luarocks make
 ```
 
 ### Package
+
+From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:
 
 Create the lua rock
 
@@ -59,6 +93,8 @@ luarocks make --pack-binary-rock
 ```
 
 ### Install
+
+From the `kong-plugin` (kong-plugin-jwt-claims-to-headers) folder:
 
 Install your newly generated rock
 

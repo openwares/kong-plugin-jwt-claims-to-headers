@@ -31,13 +31,13 @@ local function create_route(host_name, jwt_config, jwt_claims_to_header_config, 
 
   bp.plugins:insert {
     name = "jwt",
-    route_id = routeWithDefaults.id,
+    route = {id = routeWithDefaults.id},
     config = jwt_config,
   }
 
   bp.plugins:insert {
     name = "jwt-claims-to-headers",
-    route_id = routeWithDefaults.id,
+    route = {id = routeWithDefaults.id},
     config = jwt_claims_to_header_config,
   }
 
@@ -55,16 +55,8 @@ for _, strategy in helpers.each_strategy() do
 
       -- create a route to test each parameter
 
-      create_route("test-defaults.com",
-              {},
-              {},
-              bp)
-
-      create_route("test-header-prefix.com",
-              {},
-              { header_prefix = test_prefix },
-              bp)
-
+      create_route("test-defaults.com", {}, {}, bp)
+      create_route("test-header-prefix.com", {}, { header_prefix = test_prefix }, bp)
       create_route("test-claims-to-headers-table.com",
               {},
               {
@@ -74,7 +66,6 @@ for _, strategy in helpers.each_strategy() do
                 }
               },
               bp)
-
       create_route("test-uri-param-names.com",
               {
                 uri_param_names= { jwt_param_name },
@@ -84,18 +75,18 @@ for _, strategy in helpers.each_strategy() do
               },
               bp)
 
-
       -- create consumer
       local consumer = bp.consumers:insert {
         username = "testUser1",
         custom_id = "testCustomId"
       }
       consumer_id = consumer.id
-      print("Created consumer id " .. consumer.id .. ", at epoch time " .. consumer.created_at)
+      print("Created consumer id " .. consumer.id .. 
+              ", at epoch time " .. consumer.created_at)
 
       -- create jwt_secret
       local jwt_secret = bp.jwt_secrets:insert {
-        consumer_id = consumer.id,
+        consumer = {id = consumer.id},
         secret = test_secret,
         key = test_key
       }
@@ -112,8 +103,7 @@ for _, strategy in helpers.each_strategy() do
         -- use the custom test template to create a local mock server
         nginx_conf = "spec/fixtures/custom_nginx.template",
         -- set the config item to make sure our plugin gets loaded
-        plugins = "bundled,jwt,jwt-claims-to-headers",         -- since Kong CE 0.14
-        custom_plugins = "jwt-claims-to-headers",          -- pre Kong CE 0.14
+        plugins = "bundled,jwt,jwt-claims-to-headers", 
       }))
     end)
 

@@ -19,10 +19,8 @@ luarocks install kong-plugin-jwt-claims-to-headers
 Next, add the plugin to the `plugins` list in in `kong.conf` (for each Kong node):
 
 ```shell
-plugins = bundled, jwt-claims-to-headers
+plugins = bundled,jwt-claims-to-headers
 ```
-
-_**Note:** The above loads Kong's bundled plugins and jwt-claims-to-headers_
 
 - [Manual Install](#manual-install)
 - [Uninstall](#uninstall)

@@ -1,8 +1,8 @@
 # kong-jwt-claims-to-headers
 
-![](https://travis-ci.org/cdimascio/kong-plugin-jwt-claims-to-headers.svg?branch=master)
+![](https://travis-ci.org/openwares/kong-plugin-jwt-claims-to-headers.svg?branch=master)![](https://img.shields.io/badge/license-Apache%202-blue.svg)
 
-A Kong plugin that extracts JWT claims and apply them to HTTP request headers.
+A Kong plugin that extracts JWT claims and applies as HTTP request headers.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/cdimascio/kong-plugin-jwt-claims-to-headers/master/assets/jwt-claims-to-headers-logo.png" width="400"/>

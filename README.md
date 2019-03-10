@@ -8,6 +8,8 @@ A [Kong](https://konghq.com/) plugin that extracts JWT claims and applies them a
 <img src="https://raw.githubusercontent.com/cdimascio/kong-plugin-jwt-claims-to-headers/master/assets/jwt-claims-to-headers-logo.png" width="400"/>
 </p>
 
+_requires Kong 1.0.x or greater_
+
 ## Setup
 
 ### Install the plugin
@@ -23,7 +25,6 @@ Edit `kong.conf`. Add `jwt-claims-to-headers` to the `plugins` directive.
 ```shell
 plugins = bundled,jwt-claims-to-headers
 ```
-* requires Kong 1.0.x or greater
 
 ## Usage
 

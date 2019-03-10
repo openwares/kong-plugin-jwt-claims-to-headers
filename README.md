@@ -1,12 +1,14 @@
 # kong-jwt-claims-to-headers
 
-![](https://travis-ci.org/cdimascio/kong-plugin-jwt-claims-to-headers.svg?branch=master)
+![](https://travis-ci.org/openwares/kong-plugin-jwt-claims-to-headers.svg?branch=master)![](https://img.shields.io/badge/license-Apache%202-blue.svg)![http://luarocks.org/modules/cdimascio/kong-plugin-jwt-claims-to-headers](https://img.shields.io/badge/luarocks-yes-orange.svg)
 
-A Kong plugin that extracts JWT claims and apply them to HTTP request headers.
+A [Kong](https://konghq.com/) plugin that extracts JWT claims and applies them as HTTP request headers.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/cdimascio/kong-plugin-jwt-claims-to-headers/master/assets/jwt-claims-to-headers-logo.png" width="400"/>
 </p>
+
+_requires Kong 1.0.x or greater_
 
 ## Setup
 
@@ -16,14 +18,13 @@ A Kong plugin that extracts JWT claims and apply them to HTTP request headers.
 luarocks install kong-plugin-jwt-claims-to-headers
 ```
 
-Next, add the plugin to the `plugins` list in in `kong.conf` (for each Kong node):
+### Enable the plugin
+
+Edit `kong.conf`. Add `jwt-claims-to-headers` to the `plugins` directive.
 
 ```shell
 plugins = bundled,jwt-claims-to-headers
 ```
-
-- [Manual Install](#manual-install)
-- [Uninstall](#uninstall)
 
 ## Usage
 
@@ -112,7 +113,7 @@ Look for the following output:
 ### Uninstall
 
 ```shell
-luarocks remove  kong-plugin-jwt-claims-to-headers
+luarocks remove kong-plugin-jwt-claims-to-headers
 ```
 
 ## [Contributing](CONTRIBUTING.md)

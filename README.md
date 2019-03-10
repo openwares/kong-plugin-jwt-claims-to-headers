@@ -63,7 +63,7 @@ Look for the following output:
 ### Uninstall
 
 ```shell
-luarocks remove  kong-plugin-jwt-claims-to-headers
+luarocks remove kong-plugin-jwt-claims-to-headers
 ```
 
 ## [Contributing](CONTRIBUTING.md)

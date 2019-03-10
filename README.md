@@ -2,7 +2,7 @@
 
 ![](https://travis-ci.org/openwares/kong-plugin-jwt-claims-to-headers.svg?branch=master)![](https://img.shields.io/badge/license-Apache%202-blue.svg)![http://luarocks.org/modules/cdimascio/kong-plugin-jwt-claims-to-headers](https://img.shields.io/badge/luarocks-yes-orange.svg)
 
-A Kong plugin that extracts JWT claims and applies them as HTTP request headers.
+A [Kong](https://konghq.com/) plugin that extracts JWT claims and applies them as HTTP request headers.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/cdimascio/kong-plugin-jwt-claims-to-headers/master/assets/jwt-claims-to-headers-logo.png" width="400"/>
@@ -18,11 +18,12 @@ luarocks install kong-plugin-jwt-claims-to-headers
 
 ### Enable the plugin
 
-Edit `kong.conf`. Add `jwt-claims-to-headers` to the `plugins` directive :
+Edit `kong.conf`. Add `jwt-claims-to-headers` to the `plugins` directive.
 
 ```shell
 plugins = bundled,jwt-claims-to-headers
 ```
+* requires Kong 1.0.x or greater
 
 ## Usage
 

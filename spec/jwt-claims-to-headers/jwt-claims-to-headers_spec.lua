@@ -8,12 +8,15 @@ local test_key = 'test_key'
 local test_secret = 'test_secret'
 local test_claim1_value = 'test_claim1_value'
 local test_claim2_value = 'test_claim2_value'
+local test_claim3_value = { 'test_claim3_value_1', 'test_claim3_value_2' }
+local expected_claim3_value = 'test_claim3_value_1,test_claim3_value_2'
 local iss_custom_header = "issCustomHeader"
 local claim1_custom_header = "claim1CustomHeader"
 local jwt_for_test = jwtParser.encode({
   iss = test_key,
   claim1 = test_claim1_value,
-  claim2 = test_claim2_value
+  claim2 = test_claim2_value,
+  claim3 = test_claim3_value
 }, test_secret, algo)
 local test_prefix = "X-MyPrefix-"
 local jwt_param_name = "custom_jwt"
@@ -45,7 +48,7 @@ end
 for _, strategy in helpers.each_strategy() do
   describe("Jwt-Claims-to-Headers-Plugin: (access) [#" .. strategy .. "]", function()
     local client
-    local bp = helpers.get_db_utils(strategy)
+    local bp = helpers.get_db_utils(strategy, nil, { "jwt-claims-to-headers" })
 
     setup(function()
 
@@ -135,11 +138,13 @@ for _, strategy in helpers.each_strategy() do
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
         local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+        local header_value_claim3 = assert.request(r).has.header("X-Jwt-Claim-claim3")
 
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
         assert.equal(test_claim2_value, header_value_claim2)
+        assert.equal(expected_claim3_value, header_value_claim3)
       end)
 
 
@@ -158,10 +163,12 @@ for _, strategy in helpers.each_strategy() do
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
         local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+        local header_value_claim3 = assert.request(r).has.header("X-Jwt-Claim-claim3")
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
         assert.equal(test_claim2_value, header_value_claim2)
+        assert.equal(expected_claim3_value, header_value_claim3)
       end)
     end)
 
@@ -222,11 +229,13 @@ for _, strategy in helpers.each_strategy() do
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
         local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+        local header_value_claim3 = assert.request(r).has.header("X-Jwt-Claim-claim3")
 
         -- validate the value of the headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
         assert.equal(test_claim2_value, header_value_claim2)
+        assert.equal(expected_claim3_value, header_value_claim3)
       end)
 
     end)
@@ -248,10 +257,12 @@ for _, strategy in helpers.each_strategy() do
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
         local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+        local header_value_claim3 = assert.request(r).has.header("X-Jwt-Claim-claim3")
         -- validate the value of that headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
         assert.equal(test_claim2_value, header_value_claim2)
+        assert.equal(expected_claim3_value, header_value_claim3)
       end)
 
       it("with a jwt as the Bearer token, contains the X-claims header", function()
@@ -269,11 +280,14 @@ for _, strategy in helpers.each_strategy() do
         local header_value_claim_iss = assert.request(r).has.header("X-Jwt-Claim-iss")
         local header_value_claim1 = assert.request(r).has.header("X-Jwt-Claim-claim1")
         local header_value_claim2 = assert.request(r).has.header("X-Jwt-Claim-claim2")
+        local header_value_claim3 = assert.request(r).has.header("X-Jwt-Claim-claim3")
         -- validate the value of that headers
         assert.equal(test_key, header_value_claim_iss)
         assert.equal(test_claim1_value, header_value_claim1)
         assert.equal(test_claim2_value, header_value_claim2)
+        assert.equal(expected_claim3_value, header_value_claim3)
       end)
+
     end)
 
     describe("unauthorized", function()

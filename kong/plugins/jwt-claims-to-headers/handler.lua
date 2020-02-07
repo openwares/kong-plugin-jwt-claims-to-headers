@@ -130,6 +130,9 @@ function JwtClaimsToHeadersHandler:access(config)
         for key, value in pairs(claims_table) do
             local header = header_for_claim(key, config)
             if header ~= nil then
+                if type(value) == "table" then
+                    value = table.concat(value,",")
+                end
                 kong.log.debug("Set header: '", header, "' to value: '", value, "'")
                 kong.service.request.set_header(header, value)
             end
